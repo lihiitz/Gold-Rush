@@ -6,28 +6,66 @@ class GoldRush extends Matrix {
         super(row, col)
         this.players = players //players[0] = {name: "", currPos: {row: x, col: y}}
         this.prevPlayer = null
-        this.coin = {name: "C", total: 3, value: 10}
-        this.loadBoard()
+        this.coin = {name: "C", total: this.randNumOfCoins(), value: 10, poses: []}
+        this.wall = {name: "W", total: this.randNumOfWalls(), poses: []}
+        this.createBoard()
     }
 
-    randPos(){
+    randNumOfCoins(){
+        let min = 1        
+        let max = (this.row * this.col) - this.players.length//all slots on board - players slots
+        let num = Math.floor(Math.random() * (max - min + 1)) + min //The maximum is inclusive and the minimum is inclusive
+        return num
+    }
+
+    randNumOfWalls(){
+        let min = 1
+        let max = (this.row * this.col) - 
+            this.players.length - this.coin.total//all slots on board - players slots - coins slots
+        let num = Math.floor(Math.random() * (max - min + 1)) + min //The maximum is inclusive and the minimum is inclusive
+        return num
+    }
+    randCoinsPos(){
         let noCoin = [
             `${this.players[0].currPos.row}` + `${this.players[0].currPos.col}`,
             `${this.players[1].currPos.row}` + `${this.players[1].currPos.col}`
         ]
         let row = Math.floor(Math.random() * this.row)
         let col = Math.floor(Math.random() * this.col)        
-        return (noCoin.includes(`${row}` + `${col}`) ? this.randPos() : {row, col})
+        return (noCoin.includes(`${row}` + `${col}`) ? this.randCoinsPos() : {row, col})
+    }
+
+    randWallPos(){
+        let noWall = [
+            `${this.players[0].currPos.row}` + `${this.players[0].currPos.col}`,
+            `${this.players[1].currPos.row}` + `${this.players[1].currPos.col}`
+        ]
+        this.coin.poses.forEach(element => {
+            noWall.push(`${element.row}` + `${element.col}`)
+        })
+        
+        let row = Math.floor(Math.random() * this.row)
+        let col = Math.floor(Math.random() * this.col)        
+        return (noWall.includes(`${row}` + `${col}`) ? this.randWallPos() : {row, col})
     }
 
     loadCoins(){
         for (let i = 0; i < this.coin.total; i++){
-            let pos = this.randPos()
+            let pos = this.randCoinsPos()
+            this.coin.poses.push(pos)
             super.alter(pos.row, pos.col, this.coin.name)
         }
     }
 
-    loadBoard() {
+    loadWalls(){
+        for (let i = 0; i < this.wall.total; i++){
+            let pos = this.randWallPos()
+            this.wall.poses.push(pos)
+            super.alter(pos.row, pos.col, this.wall.name)
+        }
+    }
+
+    createBoard() {
         let newMatrix = []
         for (let i = 0; i < this.row; i++) {
             let row = []
@@ -39,7 +77,8 @@ class GoldRush extends Matrix {
         this.matrix = newMatrix
         super.alter(this.players[0].currPos.row, this.players[0].currPos.col, this.players[0].name)
         super.alter(this.players[1].currPos.row, this.players[1].currPos.col, this.players[1].name)
-        this.loadCoins()
+        this.loadCoins()//dont change order of loads(walls need to be after coins etc)
+        this.loadWalls()
     }
 
     updatePos(pos, dir) {
@@ -54,7 +93,7 @@ class GoldRush extends Matrix {
         }
     }
 
-    isLegal(pos) {
+    isOutOfBounds(pos){
         if (pos.row > this.row - 1) {
             return false
         }
@@ -67,10 +106,36 @@ class GoldRush extends Matrix {
         if (pos.col < 0) {
             return false
         }
-        if (this.matrix[pos.row][pos.col] === this.players[0].name) {
+        return true
+    }
+
+    isWall(pos){
+        let wallPos = this.wall.poses.find(
+            p => (p.row === pos.row && p.col === pos.col))
+        if (wallPos){
+            return true
+        }else{
             return false
         }
+    }
+
+    isOtherPlayer(pos){
+        if (this.matrix[pos.row][pos.col] === this.players[0].name) {
+            return true
+        }
         if (this.matrix[pos.row][pos.col] === this.players[1].name) {
+            return true
+        }
+        return false
+    }
+    isLegal(pos) {
+        if (!this.isOutOfBounds(pos)){
+            return false
+        }
+        if (this.isWall(pos)){
+            return false
+        }
+        if (this.isOtherPlayer(pos)){
             return false
         }
         return true
