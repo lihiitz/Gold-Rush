@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
+    <link type="text/css" rel="stylesheet" href="node_modules/materialize-css/dist/css/materialize.min.css"  media="screen,projection"/>
+    <title>Document</title>
+</head>
+<body>
+    <script id="container-template" type="text/x-handlebars-template">
+        <div class="row" id="{{rowNum}}">
+            {{#each item}}
+                <div class="col s1">{{this}}</div>
+            {{/each}}
+          </div>
+    </script>
+
+    <div class="container">
+
+    </div>
+    <!-- <div id="score">
+        <div id="player1"></div>
+        <div id="player2"></div>
+    </div>
+    <div id="bottom">
+        <div id="score1">score1</div>
+        <div id="score2">score2</div>
+        <button id="start">Start Game</button>
+    </div> -->
+    
+    <script src="./node_modules/handlebars/dist/handlebars.js"></script>
+    <script src="./node_modules/jquery/dist/jquery.js"></script>
+    <script src="Renderer.js"></script>
+    <script src="Player.js"></script>
+    <script src="Matrix.js"></script>
+    <script src="GoldRush.js"></script>
+    <script src="main.js"></script>
+    <script src="./node_modules/materialize-css/dist/js/materialize.min.js"></script>
+</body>
+</html>
