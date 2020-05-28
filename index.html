@@ -4,34 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
+    <script src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" data-auto-replace-svg="nest"></script>
     <link type="text/css" rel="stylesheet" href="node_modules/materialize-css/dist/css/materialize.min.css"  media="screen,projection"/>
     <title>Document</title>
 </head>
 <body>
-    <script id="container-template" type="text/x-handlebars-template">
-        <div class="row" id="{{rowNum}}">
-            {{#each item}}
-                <div class="col s1">{{this}}</div>
-            {{/each}}
-          </div>
+    <div id="container">
+        <div id="board">
+
+        </div>
+
+        <div id="score">
+
+        </div>
+        
+        <div id="bottom">
+            <input id="rowsInput" placeholder="choose width">
+            <input id="colsInput" placeholder="choose height">
+            <button id="startGame">Start Game</button>
+        </div>
+    </div>
+ 
+
+    <script id="board-template" type="text/x-handlebars-template">
+        {{#each item}}
+            {{#ifEquals this "1"}}
+                <i class="fas fa-dog" style="font-size: 45px; background-color: cadetblue;
+                display: grid; justify-items: center; align-items: center;
+                border: solid black;"></i>
+            {{/ifEquals}}
+            {{#ifEquals this "2"}}
+                <i class="fas fa-cat" style="font-size: 45px; background-color: cadetblue;
+                display: grid; justify-items: center; align-items: center;
+                border: solid black;"></i>
+            {{/ifEquals}}
+            {{#ifEquals this "C"}}
+                <i class="fas fa-candy-cane" style="font-size: 45px; color: pink; background-color: cadetblue;
+                display: grid; justify-items: center; align-items: center;
+                border: solid black;"></i>
+            {{/ifEquals}}
+            {{#ifEquals this "W"}}
+                <div class="item" style="background-color: burlywood;"></div>
+            {{/ifEquals}}
+            {{#ifEquals this " "}}
+                <div class="item">{{this}}</div>
+            {{/ifEquals}}
+        {{/each}}
     </script>
 
-    <div class="container" id="board">
+    <script id="score-template" type="text/x-handlebars-template">
+        <div class="score1">Player 1 score: {{score1}}</div>
+        <div class="score2">Player 2 score: {{score2}}</div>
+    </script> 
 
-    </div>
-
-    <div class="container">
-        <div class="row">
-            <div class="col s6" id="score1">score1</div>
-            <div class="col s6" id="score2">score2</div>
-        </div>
-        <div class="row" id="bottom">
-            <input class="col s2" id="rowsInput" placeholder="choose width">
-            <input class="col s2" id="colsInput" placeholder="choose height">
-            <button class="col s8" id="startGame">Start Game</button>
-        </div>
-    </div>
-    
     <script src="./node_modules/handlebars/dist/handlebars.js"></script>
     <script src="./node_modules/jquery/dist/jquery.js"></script>
     <script src="Renderer.js"></script>

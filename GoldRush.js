@@ -70,7 +70,7 @@ class GoldRush extends Matrix {
         for (let i = 0; i < this.row; i++) {
             let row = []
             for (let j = 0; j < this.col; j++) {
-                row.push(`.`)
+                row.push(` `)
             }
             newMatrix.push(row)
         }
@@ -154,7 +154,7 @@ class GoldRush extends Matrix {
         if (sign === this.coin.name){
             player.score += this.coin.value
         }
-        super.alter(prevPos.row, prevPos.col, ".")
+        super.alter(prevPos.row, prevPos.col, " ")
         this.prevPlayer = player
     }
 
