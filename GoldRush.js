@@ -78,16 +78,16 @@ class GoldRush extends Matrix {
         this.loadCoins()//dont change order of loads(walls need to be after coins etc)
         do {
             this.loadWalls()
-        }while(!this.validWalls())
+        }while(!this.isValidWalls())
     }
 
-    validWalls(){//for each coin - check if player1 and player2 can access
+    isValidWalls(){//for each coin - check if player1 and player2 can access
         const bfs = new BFS(this.matrix)
         this.coin.poses.forEach(element => {
             if (bfs.minDistance(element, this.players[0].name) === -1){
                 return false
             }
-            if(bfs.minDistance(element, this.players[1].name) === -1){
+            if (bfs.minDistance(element, this.players[1].name) === -1){
                 return false
             }
         })
