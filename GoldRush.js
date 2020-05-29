@@ -1,6 +1,3 @@
-// const Matrix = require(`./Matrix`)
-// const Player = require(`./Player`)
-
 class GoldRush extends Matrix {
     constructor(row, col, players) {
         super(row, col)
@@ -58,6 +55,7 @@ class GoldRush extends Matrix {
     }
 
     loadWalls(){
+        this.loadWalls = []
         for (let i = 0; i < this.wall.total; i++){
             let pos = this.randWallPos()
             this.wall.poses.push(pos)
@@ -78,9 +76,23 @@ class GoldRush extends Matrix {
         super.alter(this.players[0].currPos.row, this.players[0].currPos.col, this.players[0].name)
         super.alter(this.players[1].currPos.row, this.players[1].currPos.col, this.players[1].name)
         this.loadCoins()//dont change order of loads(walls need to be after coins etc)
-        this.loadWalls()
+        do {
+            this.loadWalls()
+        }while(!this.validWalls())
     }
 
+    validWalls(){//for each coin - check if player1 and player2 can access
+        const bfs = new BFS(this.matrix)
+        this.coin.poses.forEach(element => {
+            if (bfs.minDistance(element, this.players[0].name) === -1){
+                return false
+            }
+            if(bfs.minDistance(element, this.players[1].name) === -1){
+                return false
+            }
+        })
+        return true
+    }
     updatePos(pos, dir) {
         if (dir === 'up') {
             pos.row --
@@ -172,5 +184,3 @@ class GoldRush extends Matrix {
         }
     }
 }
-
-// module.exports = GoldRush

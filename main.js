@@ -9,10 +9,6 @@ Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
     return (arg1 === arg2) ? options.fn(this) : options.inverse(this)
 })
 
-Handlebars.registerHelper('ifNotEquals', function(arg1, arg2, arg3, options) {
-    return (arg1 !== arg2 && arg1 !== arg3) ? options.fn(this) : options.inverse(this)
-})
-
 $(`#startGame`).on(`click`, function(){
     let numOfRows = $(`#rowsInput`).val()
     let numOfCols = $(`#colsInput`).val()
