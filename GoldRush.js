@@ -47,6 +47,7 @@ class GoldRush extends Matrix {
     }
 
     loadCoins(){
+        this.coin.poses = []
         for (let i = 0; i < this.coin.total; i++){
             let pos = this.randCoinsPos()
             this.coin.poses.push(pos)
@@ -55,7 +56,7 @@ class GoldRush extends Matrix {
     }
 
     loadWalls(){
-        this.loadWalls = []
+        this.wall.poses = []
         for (let i = 0; i < this.wall.total; i++){
             let pos = this.randWallPos()
             this.wall.poses.push(pos)
