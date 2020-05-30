@@ -19,10 +19,7 @@ $(`#startGame`).on(`click`, function(){
     board = new GoldRush(numOfRows, numOfCols, [p1, p2])
     render.renderBoard(board.matrix)
     render.renderScore(0, 0)
-    // do{
-        startGame()
-    // }while(board.coinsOnBoard !== 0)
-    // alert("game over")
+    startGame()
 })
 const finishGame = function(){
     let winner

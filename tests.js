@@ -21,9 +21,7 @@ $(`#startGame`).on(`click`, function(){
         ["C", "W", "C"],
         [" ", "C", "2"]
     ]
-    coin = [{row: 1, col: 0}, {row: 2, col: 1}, {row: 1, col: 2}]
-    let valid = isValidWalls(board, coin)
- 
+
     render.renderBoard(board)
     render.renderScore(0, 0)
     startGame()

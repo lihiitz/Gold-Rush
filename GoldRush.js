@@ -8,6 +8,20 @@ class GoldRush extends Matrix {
         this.coinsOnBoard = 0
         this.createBoard()
     }
+    // // USE FOR TESTS ONLY
+    // constructor(row, col, players) {
+    //     super(row, col)
+    //     this.players = players //players[0] = {name: "", currPos: {row: x, col: y}}
+    //     this.prevPlayer = null
+    //     this.coin = { name: "C", total: 3, value: 10, poses: [{row: 1, col: 0}, {row: 2, col: 1}, {row: 1, col: 2}] }
+    //     this.wall = { name: "W", total: 3, poses: [{row: 0, col: 1}, {row: 0, col: 2}, {row: 1, col: 1}] }
+    //     this.coinsOnBoard = 0
+    //     this.matrix = [
+    //         ["1", "W", "W"],
+    //         ["C", "W", "C"],
+    //         [" ", "C", "2"]
+    //     ]
+    // }
 
     randNumOfCoins() {
         let min = 1
@@ -172,38 +186,41 @@ class GoldRush extends Matrix {
         return true
     }
 
-    isOtherPlayerStuck(player){
+    isOtherPlayerStuck(player){//if other player is stack - func will return false
         let otherPlayer
         player.name === "1" ? otherPlayer = this.players[1] : otherPlayer = this.players[0]
-        let pos = {}
-        pos = otherPlayer.currPos
+        let pos = {row: otherPlayer.currPos.row, col: otherPlayer.currPos.col}
         this.updatePos(pos, "up")
         if (this.isLegal(pos)){
             return true
         }
+        pos = {row: otherPlayer.currPos.row, col: otherPlayer.currPos.col}
         this.updatePos(pos, "down")
         if(this.isLegal(pos)){
             return true
         }
+        pos = {row: otherPlayer.currPos.row, col: otherPlayer.currPos.col}
         this.updatePos(pos, "left")
         if(this.isLegal(pos)){
             return true
         }
+        pos = {row: otherPlayer.currPos.row, col: otherPlayer.currPos.col}
         this.updatePos(pos, "right")
         if(this.isLegal(pos)){
             return true
         }
-        return false
+        return false //meaning other player is stuck
     }
 
     isPlayerTurn(player) {
-        // if (this.isOtherPlayerStuck(player)){
-        //     return true
-        // }
         if (this.prevPlayer !== null && player.name === this.prevPlayer.name) {
-            return false
+            if (!this.isOtherPlayerStuck(player)){
+                return true//not player turn but other player is stuck
+            }else{
+                return false//not player turn
+            }
         }
-        return true
+        return true //player turn
     }
 
     makeMove(player, pos, prevPos) {
