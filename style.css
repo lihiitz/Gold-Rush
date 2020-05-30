@@ -1,6 +1,9 @@
 #board{
   display: grid;
 }
+#gameOver{
+  color: gold;
+}
 .item{
   font-size: 45px; 
   background-color: cadetblue;

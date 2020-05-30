@@ -15,4 +15,10 @@ class Renderer {
         const newHtml = template({ score1, score2 })
         $(`#score`).append(newHtml)
     }
+    renderGameOver(winner){
+        const source = $(`#gameOver-template`).html()
+        const template = Handlebars.compile(source)
+        const newHtml = template({ winner})
+        $(`#board`).append(newHtml)
+    }
 }

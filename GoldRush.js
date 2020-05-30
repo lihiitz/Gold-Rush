@@ -5,12 +5,13 @@ class GoldRush extends Matrix {
         this.prevPlayer = null
         this.coin = { name: "C", total: this.randNumOfCoins(), value: 10, poses: [] }
         this.wall = { name: "W", total: this.randNumOfWalls(), poses: [] }
+        this.coinsOnBoard = 0
         this.createBoard()
     }
 
     randNumOfCoins() {
         let min = 1
-        let max = (this.row * this.col) - this.players.length//all slots on board - players slots
+        let max = (this.row * this.col) - this.players.length - 1//all slots on board - players slots - 1 (save at least 1 slot for wall)
         let num = Math.floor(Math.random() * (max - min + 1)) + min //The maximum is inclusive and the minimum is inclusive
         return num
     }
@@ -19,7 +20,7 @@ class GoldRush extends Matrix {
         let min = 1
         let max = (this.row * this.col) -
             this.players.length - this.coin.total//all slots on board - players slots - coins slots
-        let num = Math.floor(Math.random() * (max - min + 1)) + min //The maximum is inclusive and the minimum is inclusive
+        let num = Math.floor(Math.random() * (max - min + 1)) + min //The maximum is inclusive and the minimum is inclusive        
         return num
     }
     randCoinsPos() {
@@ -27,6 +28,9 @@ class GoldRush extends Matrix {
             `${this.players[0].currPos.row}` + `${this.players[0].currPos.col}`,
             `${this.players[1].currPos.row}` + `${this.players[1].currPos.col}`
         ]
+        this.coin.poses.forEach(element => {
+            noCoin.push(`${element.row}` + `${element.col}`)
+        })
         let row = Math.floor(Math.random() * this.row)
         let col = Math.floor(Math.random() * this.col)
         return (noCoin.includes(`${row}` + `${col}`) ? this.randCoinsPos() : { row, col })
@@ -40,7 +44,9 @@ class GoldRush extends Matrix {
         this.coin.poses.forEach(element => {
             noWall.push(`${element.row}` + `${element.col}`)
         })
-
+        this.wall.poses.forEach(element => {
+            noWall.push(`${element.row}` + `${element.col}`)
+        })
         let row = Math.floor(Math.random() * this.row)
         let col = Math.floor(Math.random() * this.col)
         return (noWall.includes(`${row}` + `${col}`) ? this.randWallPos() : { row, col })
@@ -80,6 +86,7 @@ class GoldRush extends Matrix {
         super.alter(this.players[0].currPos.row, this.players[0].currPos.col, this.players[0].name)
         super.alter(this.players[1].currPos.row, this.players[1].currPos.col, this.players[1].name)
         this.loadCoins()//don't change order of loads(walls need to be after coins etc)
+        this.coinsOnBoard = this.coin.total
         do {
             this.loadWalls()
         } while (!this.isValidWalls())
@@ -165,7 +172,34 @@ class GoldRush extends Matrix {
         return true
     }
 
+    isOtherPlayerStuck(player){
+        let otherPlayer
+        player.name === "1" ? otherPlayer = this.players[1] : otherPlayer = this.players[0]
+        let pos = {}
+        pos = otherPlayer.currPos
+        this.updatePos(pos, "up")
+        if (this.isLegal(pos)){
+            return true
+        }
+        this.updatePos(pos, "down")
+        if(this.isLegal(pos)){
+            return true
+        }
+        this.updatePos(pos, "left")
+        if(this.isLegal(pos)){
+            return true
+        }
+        this.updatePos(pos, "right")
+        if(this.isLegal(pos)){
+            return true
+        }
+        return false
+    }
+
     isPlayerTurn(player) {
+        // if (this.isOtherPlayerStuck(player)){
+        //     return true
+        // }
         if (this.prevPlayer !== null && player.name === this.prevPlayer.name) {
             return false
         }
@@ -177,6 +211,7 @@ class GoldRush extends Matrix {
         super.alter(pos.row, pos.col, player.name)
         if (sign === this.coin.name) {
             player.score += this.coin.value
+            this.coinsOnBoard --
         }
         super.alter(prevPos.row, prevPos.col, " ")
         this.prevPlayer = player
@@ -190,7 +225,7 @@ class GoldRush extends Matrix {
             console.log(`invalid move`)
         } else if (!this.isPlayerTurn(player)) {
             console.log(`not your turn`)
-        } else {//legal move and my turn:
+        } else {//legal move and current player turn:
             player.currPos = tempPos
             this.makeMove(player, player.currPos, prevPos)
         }

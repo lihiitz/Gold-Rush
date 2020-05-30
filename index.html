@@ -32,7 +32,6 @@
         </div>
     </div>
 
-
     <script id="board-template" type="text/x-handlebars-template">
         {{#each item}}
             {{#ifEquals this "1"}}
@@ -56,6 +55,18 @@
     <script id="score-template" type="text/x-handlebars-template">
         <div class="col s6" id="score1">Player 1 score: {{score1}}</div>
         <div class="col s6" id="score2">Player 2 score: {{score2}}</div>
+    </script>
+    
+    <script id="gameOver-template" type="text/x-handlebars-template">
+        {{#ifEquals winner "1"}}
+            <div id="gameOver">Game Over! The winner is:<i class="fas fa-dog"></i></div>
+        {{/ifEquals}}
+        {{#ifEquals winner "2"}}
+            <div id="gameOver">Game Over! The winner is: <i class="fas fa-cat"></i></div>
+        {{/ifEquals}}
+        {{#ifEquals winner "null"}}
+            <div id="gameOver">Game Over! Its a Tie</div>
+        {{/ifEquals}}
     </script>
 
     <script src="./node_modules/handlebars/dist/handlebars.js"></script>

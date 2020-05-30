@@ -19,9 +19,22 @@ $(`#startGame`).on(`click`, function(){
     board = new GoldRush(numOfRows, numOfCols, [p1, p2])
     render.renderBoard(board.matrix)
     render.renderScore(0, 0)
-    startGame()
+    // do{
+        startGame()
+    // }while(board.coinsOnBoard !== 0)
+    // alert("game over")
 })
-
+const finishGame = function(){
+    let winner
+    if (board.players[0].score > board.players[1].score){
+        winner = board.players[0].name
+    }else if (board.players[1].score > board.players[0].score){
+        winner = board.players[1].name
+    }else{
+        winner = null
+    }
+    render.renderGameOver(winner)    
+}
 const startGame = function(){
     $(document).keypress(function (e) {
         let move
@@ -64,6 +77,9 @@ const startGame = function(){
         }
         board.movePlayer(p, move)
         render.renderBoard(board.matrix)
-        render.renderScore(p1.score, p2.score)    
+        render.renderScore(p1.score, p2.score)        
+        if (board.coinsOnBoard === 0){
+            finishGame()
+        }   
     })
 }
