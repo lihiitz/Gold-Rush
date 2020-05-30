@@ -1,50 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
     <script src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" data-auto-replace-svg="nest"></script>
-    <link type="text/css" rel="stylesheet" href="node_modules/materialize-css/dist/css/materialize.min.css"  media="screen,projection"/>
+    <link type="text/css" rel="stylesheet" href="node_modules/materialize-css/dist/css/materialize.min.css"
+        media="screen,projection" />
     <title>Document</title>
 </head>
+
 <body>
-    <div id="container">
-        <div id="board">
-
-        </div>
-
-        <div id="score">
-
-        </div>
-        
-        <div id="bottom">
-            <input id="rowsInput" placeholder="choose width">
-            <input id="colsInput" placeholder="choose height">
-            <div id="startGame">Start Game</div>
+    <div class="container">
+        <div class="row flow-text">
+            <div class="col s12">
+                <div class="row" id="board">
+                </div>
+                <div class="row" id="score">
+                </div>
+                <div class="row">
+                    <div class="input-field col s3">
+                        <input placeholder="Rows" id="rowsInput" type="text" class="validate">
+                    </div>
+                    <div class="input-field col s3">
+                        <input placeholder="Columns" id="colsInput" type="text" class="validate">
+                    </div>
+                    <a class="waves-effect waves-light btn col s6" id="startGame">Start Game</a>
+                </div>
+            </div>
         </div>
     </div>
- 
+
 
     <script id="board-template" type="text/x-handlebars-template">
         {{#each item}}
             {{#ifEquals this "1"}}
-                <i class="fas fa-dog" style="font-size: 45px; background-color: cadetblue;
-                display: grid; justify-items: center; align-items: center;
-                border: solid black;"></i>
+                <i class="fas fa-dog item"></i>
             {{/ifEquals}}
             {{#ifEquals this "2"}}
-                <i class="fas fa-cat" style="font-size: 45px; background-color: cadetblue;
-                display: grid; justify-items: center; align-items: center;
-                border: solid black;"></i>
+                <i class="fas fa-cat item"></i>
             {{/ifEquals}}
             {{#ifEquals this "C"}}
-                <i class="fas fa-candy-cane" style="font-size: 45px; color: pink; background-color: cadetblue;
-                display: grid; justify-items: center; align-items: center;
-                border: solid black;"></i>
+                <i class="fas fa-candy-cane item coin"></i>
             {{/ifEquals}}
             {{#ifEquals this "W"}}
-                <div class="item" style="background-color: burlywood;"></div>
+                <div class="item wall"></div>
             {{/ifEquals}}
             {{#ifEquals this " "}}
                 <div class="item">{{this}}</div>
@@ -53,9 +54,9 @@
     </script>
 
     <script id="score-template" type="text/x-handlebars-template">
-        <div class="score1">Player 1 score: {{score1}}</div>
-        <div class="score2">Player 2 score: {{score2}}</div>
-    </script> 
+        <div class="col s6" id="score1">Player 1 score: {{score1}}</div>
+        <div class="col s6" id="score2">Player 2 score: {{score2}}</div>
+    </script>
 
     <script src="./node_modules/handlebars/dist/handlebars.js"></script>
     <script src="./node_modules/jquery/dist/jquery.js"></script>
@@ -69,4 +70,5 @@
     <script src="./main.js"></script>
     <script src="./node_modules/materialize-css/dist/js/materialize.min.js"></script>
 </body>
+
 </html>

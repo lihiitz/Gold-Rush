@@ -1,7 +1,4 @@
 class Renderer {
-
-
-
     renderBoard(matrix) {
         $(`#board`).empty()
         const source = $(`#board-template`).html()
