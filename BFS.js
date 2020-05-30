@@ -7,6 +7,7 @@ class BFS {
     }
 
     loadVisited(){
+        this.visited = []
         for (let i = 0; i < this.N; i++) {
             let row = []
             for (let j = 0; j < this.M; j++) {

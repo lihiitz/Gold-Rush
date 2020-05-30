@@ -17,3 +17,11 @@
 .wall{
   background-color: burlywood
 }
+#score1{
+  display: grid;
+  justify-items: start;
+}
+#score2{
+  display: grid;
+  justify-items: end;
+}

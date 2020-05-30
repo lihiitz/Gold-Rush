@@ -7,13 +7,12 @@ class Matrix{
     }
 
     generateMatrix(row, col){
-        let counter = 1
         for (let i = 0; i < row; i++)
         {
             let currRow = []
             for (let j = 0; j < col; j++)
             {
-                currRow.push(counter++)
+                currRow.push(" ")
             }
             this.matrix.push(currRow)
         }
