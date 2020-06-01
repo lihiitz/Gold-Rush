@@ -1,9 +1,21 @@
-// const GoldRush = require(`./GoldRush`)
-// const Player = require(`./Player`)
-
-
+const socket = io()
 const render = new Renderer()
-let p1, p2, board
+let p1, p2, game
+
+socket.on('ping', function(data){
+    socket.emit('pong', {beat: 1});
+  })
+
+socket.on(`movement`, function(_game){
+    // const [player1, player2] = _game.players
+    // const { name, currPos } = _game.players[0]
+    p1 = new Player(_game.players[0].name, _game.players[0].currPos, _game.players[0].currentTurn, _game.players[0].score)
+    p2 = new Player(_game.players[1].name, _game.players[1].currPos, _game.players[1].currentTurn, _game.players[1].score)
+    game = new GoldRush(_game.row, _game.col, [p1, p2])
+    
+    game.copy(_game)    
+    renderAll()
+})
 
 Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
     return (arg1 === arg2) ? options.fn(this) : options.inverse(this)
@@ -14,24 +26,36 @@ $(`#startGame`).on(`click`, function(){
     let numOfCols = $(`#colsInput`).val()
     $(`#board`).css("grid-template-columns", `repeat(${numOfCols}, 1fr)`)
     $(`#board`).css("grid-template-rows", `repeat(${numOfRows}, 1fr)`)
-    p1 = new Player("1", { row: 0, col: 0 })
-    p2 = new Player("2", { row: numOfRows - 1, col: numOfCols - 1 })
-    board = new GoldRush(numOfRows, numOfCols, [p1, p2])
-    render.renderBoard(board.matrix)
-    render.renderScore(0, 0)
+    p1 = new Player("1", { row: 0, col: 0 }, true, 0)
+    p2 = new Player("2", { row: numOfRows - 1, col: numOfCols - 1 }, false, 0)
+    game = new GoldRush(numOfRows, numOfCols, [p1, p2])
+    /////////////////////////////////////////////////////
+    socket.emit('movement', game);    
+    /////////////////////////////////////////
+    renderAll()
     startGame()
 })
+
 const finishGame = function(){
     let winner
-    if (board.players[0].score > board.players[1].score){
-        winner = board.players[0].name
-    }else if (board.players[1].score > board.players[0].score){
-        winner = board.players[1].name
+    if (game.players[0].score > game.players[1].score){
+        winner = game.players[0].name
+    }else if (game.players[1].score > game.players[0].score){
+        winner = game.players[1].name
     }else{
         winner = null
     }
     render.renderGameOver(winner)    
 }
+
+const renderAll = function(){
+    render.renderBoard(game.matrix)
+    render.renderScore(p1.score, p2.score)        
+    if (game.coinsOnBoard === 0){
+        finishGame()
+    } 
+}
+
 const startGame = function(){
     $(document).keypress(function (e) {
         let move
@@ -72,11 +96,8 @@ const startGame = function(){
             default:
                 break;
         }
-        board.movePlayer(p, move)
-        render.renderBoard(board.matrix)
-        render.renderScore(p1.score, p2.score)        
-        if (board.coinsOnBoard === 0){
-            finishGame()
-        }   
+        game.movePlayer(p, move)        
+        socket.emit(`movement`, game)
+        renderAll() 
     })
 }
