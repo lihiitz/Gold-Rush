@@ -2,12 +2,14 @@ class GoldRush extends Matrix {
     constructor(row, col, players) {
         super(row, col)
         this.players = players //players[0] = {name: "", currPos: {row: x, col: y}}
-        this.prevPlayer = null
+        // this.prevPlayer = {}
         this.coin = { name: "C", total: this.randNumOfCoins(), value: 10, poses: [] }
         this.wall = { name: "W", total: this.randNumOfWalls(), poses: [] }
         this.coinsOnBoard = 0
         this.createBoard()
+        // this.roomId = roomId
     }
+
     // // USE FOR TESTS ONLY
     // constructor(row, col, players) {
     //     super(row, col)
@@ -23,6 +25,17 @@ class GoldRush extends Matrix {
     //     ]
     // }
 
+    copy(game){
+        // console.log(game.players);
+        
+        // this.players = game.players
+        this.matrix = game.matrix
+        // this.prevPlayer = game.prevPlayer
+        this.coin = game.coin
+        this.wall = game.wall
+        this.coinsOnBoard = game.coinsOnBoard
+    }
+    
     randNumOfCoins() {
         let min = 1
         let max = (this.row * this.col) - this.players.length - 1//all slots on board - players slots - 1 (save at least 1 slot for wall)
@@ -213,14 +226,13 @@ class GoldRush extends Matrix {
     }
 
     isPlayerTurn(player) {
-        if (this.prevPlayer !== null && player.name === this.prevPlayer.name) {
-            if (!this.isOtherPlayerStuck(player)){
+        // if (this.prevPlayer !== null && player.name === this.prevPlayer.name) {
+            if (player.getPlayerTurn()){
+                return true
+            }else if (!this.isOtherPlayerStuck(player)){
                 return true//not player turn but other player is stuck
-            }else{
-                return false//not player turn
             }
-        }
-        return true //player turn
+            return false//not player turn
     }
 
     makeMove(player, pos, prevPos) {
@@ -231,7 +243,10 @@ class GoldRush extends Matrix {
             this.coinsOnBoard --
         }
         super.alter(prevPos.row, prevPos.col, " ")
-        this.prevPlayer = player
+        player.setPlayerTurn(false)
+        
+        
+        player.name === "1" ? this.players[1].setPlayerTurn(true) : this.players[0].setPlayerTurn(true)
     }
 
     movePlayer(player, dir) {
@@ -244,6 +259,8 @@ class GoldRush extends Matrix {
             console.log(`not your turn`)
         } else {//legal move and current player turn:
             player.currPos = tempPos
+            // console.log(player)
+            
             this.makeMove(player, player.currPos, prevPos)
         }
     }
