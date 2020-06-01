@@ -2,7 +2,6 @@ class GoldRush extends Matrix {
     constructor(row, col, players) {
         super(row, col)
         this.players = players //players[0] = {name: "", currPos: {row: x, col: y}}
-        // this.prevPlayer = {}
         this.coin = { name: "C", total: this.randNumOfCoins(), value: 10, poses: [] }
         this.wall = { name: "W", total: this.randNumOfWalls(), poses: [] }
         this.coinsOnBoard = 0
@@ -26,11 +25,7 @@ class GoldRush extends Matrix {
     // }
 
     copy(game){
-        // console.log(game.players);
-        
-        // this.players = game.players
         this.matrix = game.matrix
-        // this.prevPlayer = game.prevPlayer
         this.coin = game.coin
         this.wall = game.wall
         this.coinsOnBoard = game.coinsOnBoard
@@ -50,6 +45,7 @@ class GoldRush extends Matrix {
         let num = Math.floor(Math.random() * (max - min + 1)) + min //The maximum is inclusive and the minimum is inclusive        
         return num
     }
+
     randCoinsPos() {
         let noCoin = [
             `${this.players[0].currPos.row}` + `${this.players[0].currPos.col}`,
@@ -139,6 +135,7 @@ class GoldRush extends Matrix {
         }
         return true
     }
+
     updatePos(pos, dir) {
         if (dir === 'up') {
             pos.row--
@@ -226,7 +223,6 @@ class GoldRush extends Matrix {
     }
 
     isPlayerTurn(player) {
-        // if (this.prevPlayer !== null && player.name === this.prevPlayer.name) {
             if (player.getPlayerTurn()){
                 return true
             }else if (!this.isOtherPlayerStuck(player)){
@@ -244,8 +240,6 @@ class GoldRush extends Matrix {
         }
         super.alter(prevPos.row, prevPos.col, " ")
         player.setPlayerTurn(false)
-        
-        
         player.name === "1" ? this.players[1].setPlayerTurn(true) : this.players[0].setPlayerTurn(true)
     }
 
@@ -259,8 +253,6 @@ class GoldRush extends Matrix {
             console.log(`not your turn`)
         } else {//legal move and current player turn:
             player.currPos = tempPos
-            // console.log(player)
-            
             this.makeMove(player, player.currPos, prevPos)
         }
     }

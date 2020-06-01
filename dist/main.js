@@ -12,18 +12,10 @@ socket.on(`movement`, function(_game){
     p1 = new Player(_game.players[0].name, _game.players[0].currPos, _game.players[0].currentTurn, _game.players[0].score)
     p2 = new Player(_game.players[1].name, _game.players[1].currPos, _game.players[1].currentTurn, _game.players[1].score)
     game = new GoldRush(_game.row, _game.col, [p1, p2])
-    // game = new GoldRush(_game.row, _game.col, _game.players)
     
-    game.copy(_game)
-    // renderAll()
-    console.log(game.players);
-    
+    game.copy(_game)    
     renderAll()
-
 })
-
-
-
 
 Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
     return (arg1 === arg2) ? options.fn(this) : options.inverse(this)
@@ -38,9 +30,7 @@ $(`#startGame`).on(`click`, function(){
     p2 = new Player("2", { row: numOfRows - 1, col: numOfCols - 1 }, false, 0)
     game = new GoldRush(numOfRows, numOfCols, [p1, p2])
     /////////////////////////////////////////////////////
-    socket.emit('movement', game);
-    // console.log(game);
-    
+    socket.emit('movement', game);    
     /////////////////////////////////////////
     renderAll()
     startGame()
@@ -65,6 +55,7 @@ const renderAll = function(){
         finishGame()
     } 
 }
+
 const startGame = function(){
     $(document).keypress(function (e) {
         let move
@@ -107,8 +98,6 @@ const startGame = function(){
         }
         game.movePlayer(p, move)        
         socket.emit(`movement`, game)
-        
-        
         renderAll() 
     })
 }
