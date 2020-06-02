@@ -87,7 +87,7 @@ class GoldRush extends Matrix {
     cleanOldWalls() {
         for (let i = 0; i < this.row; i++) {
             for (let j = 0; j < this.col; j++) {
-                if (super.get(i, j) === 'W') {
+                if (super.get(i, j) === this.wall.name) {
                     super.alter(i, j, " ")
                 }
             }
@@ -196,6 +196,9 @@ class GoldRush extends Matrix {
         return true
     }
 
+    updatePosAndCheckIfLegal(){
+        
+    }
     isOtherPlayerStuck(player){//if other player is stack - func will return false
         let otherPlayer
         player.name === "1" ? otherPlayer = this.players[1] : otherPlayer = this.players[0]
