@@ -2,27 +2,11 @@ class GoldRush extends Matrix {
     constructor(row, col, players) {
         super(row, col)
         this.players = players //players[0] = {name: "", currPos: {row: x, col: y}}
-        this.coin = { name: "C", total: this.randNumOfCoins(), value: 10, poses: [] }
-        this.wall = { name: "W", total: this.randNumOfWalls(), poses: [] }
+        this.coin = { name: "C", total: this.randNum(1, ((row * col) - players.length - 1)), value: 10, poses: [] }
+        this.wall = { name: "W", total: this.randNum(1, ((row * col) - players.length - this.coin.total)), poses: [] }
         this.coinsOnBoard = 0
         this.createBoard()
-        // this.roomId = roomId
     }
-
-    // // USE FOR TESTS ONLY
-    // constructor(row, col, players) {
-    //     super(row, col)
-    //     this.players = players //players[0] = {name: "", currPos: {row: x, col: y}}
-    //     this.prevPlayer = null
-    //     this.coin = { name: "C", total: 3, value: 10, poses: [{row: 1, col: 0}, {row: 2, col: 1}, {row: 1, col: 2}] }
-    //     this.wall = { name: "W", total: 3, poses: [{row: 0, col: 1}, {row: 0, col: 2}, {row: 1, col: 1}] }
-    //     this.coinsOnBoard = 0
-    //     this.matrix = [
-    //         ["1", "W", "W"],
-    //         ["C", "W", "C"],
-    //         [" ", "C", "2"]
-    //     ]
-    // }
 
     copy(game){
         this.matrix = game.matrix
@@ -31,19 +15,8 @@ class GoldRush extends Matrix {
         this.coinsOnBoard = game.coinsOnBoard
     }
     
-    randNumOfCoins() {
-        let min = 1
-        let max = (this.row * this.col) - this.players.length - 1//all slots on board - players slots - 1 (save at least 1 slot for wall)
-        let num = Math.floor(Math.random() * (max - min + 1)) + min //The maximum is inclusive and the minimum is inclusive
-        return num
-    }
-
-    randNumOfWalls() {
-        let min = 1
-        let max = (this.row * this.col) -
-            this.players.length - this.coin.total//all slots on board - players slots - coins slots
-        let num = Math.floor(Math.random() * (max - min + 1)) + min //The maximum is inclusive and the minimum is inclusive        
-        return num
+    randNum(min, max){
+        return (Math.floor(Math.random() * (max - min + 1)) + min)
     }
 
     randCoinsPos() {
@@ -97,7 +70,7 @@ class GoldRush extends Matrix {
     loadWalls() {
         this.cleanOldWalls()
         this.wall.poses = []
-        this.wall.total = this.randNumOfWalls()
+        this.wall.total = this.randNum(1, (this.row * this.col) - this.players.length - this.coin.total)
         for (let i = 0; i < this.wall.total; i++) {
             let pos = this.randWallPos()
             this.wall.poses.push(pos)
@@ -117,14 +90,6 @@ class GoldRush extends Matrix {
 
     isValidWalls() {//for each coin - check if player1 and player2 can access
         const bfs = new BFS(this.matrix)
-        // this.coin.poses.forEach(element => {
-        //     if (bfs.minDistance(element, this.players[0].name) === -1){
-        //         return false
-        //     }
-        //     if (bfs.minDistance(element, this.players[1].name) === -1){
-        //         return false
-        //     }
-        // })
         for (let i = 0; i < this.coin.poses.length; i++) {
             if (bfs.minDistance(this.coin.poses[i], this.players[0].name) === -1) {
                 return false
@@ -137,14 +102,21 @@ class GoldRush extends Matrix {
     }
 
     updatePos(pos, dir) {
-        if (dir === 'up') {
-            pos.row--
-        } else if (dir === 'down') {
-            pos.row++
-        } else if (dir === 'left') {
-            pos.col--
-        } else {//right
-            pos.col++
+        switch (dir) {
+            case `up`:
+                pos.row --
+                break
+            case 'down':
+                pos.row ++
+                break
+            case `left`:
+                pos.col --
+                break
+            case 'right':
+                pos.col ++
+                break
+            default:
+                break
         }
     }
 
@@ -164,16 +136,6 @@ class GoldRush extends Matrix {
         return true
     }
 
-    isWall(pos) {
-        let wallPos = this.wall.poses.find(
-            p => (p.row === pos.row && p.col === pos.col))
-        if (wallPos) {
-            return true
-        } else {
-            return false
-        }
-    }
-
     isOtherPlayer(pos) {
         if (this.matrix[pos.row][pos.col] === this.players[0].name) {
             return true
@@ -183,11 +145,12 @@ class GoldRush extends Matrix {
         }
         return false
     }
+
     isLegal(pos) {
         if (!this.isOutOfBounds(pos)) {
             return false
         }
-        if (this.isWall(pos)) {
+        if (this.matrix[pos.row][pos.col] === this.wall.name){
             return false
         }
         if (this.isOtherPlayer(pos)) {
@@ -196,45 +159,44 @@ class GoldRush extends Matrix {
         return true
     }
 
-    updatePosAndCheckIfLegal(){
-        
-    }
-    isOtherPlayerStuck(player){//if other player is stack - func will return false
-        let otherPlayer
-        player.name === "1" ? otherPlayer = this.players[1] : otherPlayer = this.players[0]
-        let pos = {row: otherPlayer.currPos.row, col: otherPlayer.currPos.col}
-        this.updatePos(pos, "up")
+    updatePosAndCheckIfLegal(otherPlayer, dir){
+        let pos = {...otherPlayer.currPos}
+        this.updatePos(pos, dir)
         if (this.isLegal(pos)){
             return true
         }
-        pos = {row: otherPlayer.currPos.row, col: otherPlayer.currPos.col}
-        this.updatePos(pos, "down")
-        if(this.isLegal(pos)){
-            return true
+    }
+
+    isOtherPlayerStuck(player){
+        let otherPlayer
+        player.name === this.players[0].name ? otherPlayer = this.players[1] : otherPlayer = this.players[0]
+
+        if (this.updatePosAndCheckIfLegal(otherPlayer, "up")){
+            return false
         }
-        pos = {row: otherPlayer.currPos.row, col: otherPlayer.currPos.col}
-        this.updatePos(pos, "left")
-        if(this.isLegal(pos)){
-            return true
+        if (this.updatePosAndCheckIfLegal(otherPlayer, "down")){
+            return false
         }
-        pos = {row: otherPlayer.currPos.row, col: otherPlayer.currPos.col}
-        this.updatePos(pos, "right")
-        if(this.isLegal(pos)){
-            return true
+        if (this.updatePosAndCheckIfLegal(otherPlayer, "left")){
+            return false
         }
-        return false //meaning other player is stuck
+        if (this.updatePosAndCheckIfLegal(otherPlayer, "right")){
+            return false
+        }
+        return true //meaning other player is stuck
     }
 
     isPlayerTurn(player) {
             if (player.getPlayerTurn()){
                 return true
-            }else if (!this.isOtherPlayerStuck(player)){
+            }else if (this.isOtherPlayerStuck(player)){
                 return true//not player turn but other player is stuck
             }
             return false//not player turn
     }
 
-    makeMove(player, pos, prevPos) {
+    makeMove(player, prevPos) {
+        let pos = player.currPos
         let sign = super.get(pos.row, pos.col)
         super.alter(pos.row, pos.col, player.name)
         if (sign === this.coin.name) {
@@ -243,12 +205,12 @@ class GoldRush extends Matrix {
         }
         super.alter(prevPos.row, prevPos.col, " ")
         player.setPlayerTurn(false)
-        player.name === "1" ? this.players[1].setPlayerTurn(true) : this.players[0].setPlayerTurn(true)
+        player.name === this.players[0].name ? this.players[1].setPlayerTurn(true) : this.players[0].setPlayerTurn(true)
     }
 
     movePlayer(player, dir) {
-        let tempPos = { row: player.currPos.row, col: player.currPos.col }
-        let prevPos = { row: tempPos.row, col: tempPos.col }
+        let tempPos = {...player.currPos}
+        let prevPos = {...player.currPos}
         this.updatePos(tempPos, dir)
         if (!this.isLegal(tempPos)) {
             console.log(`invalid move`)
@@ -256,7 +218,7 @@ class GoldRush extends Matrix {
             console.log(`not your turn`)
         } else {//legal move and current player turn:
             player.currPos = tempPos
-            this.makeMove(player, player.currPos, prevPos)
+            this.makeMove(player, prevPos)
         }
     }
 }

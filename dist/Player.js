@@ -17,5 +17,3 @@ class Player{
         this.pos = newPos
     }
 }
-
-// module.exports = Player
