@@ -1,4 +1,4 @@
-const socket = io()
+const socket = io.connect()
 const render = new Renderer()
 let p1, p2, game
 
@@ -6,9 +6,10 @@ socket.on('ping', function(data){
     socket.emit('pong', {beat: 1});
   })
 
+socket.emit('createGame', 'room1')
+
 socket.on(`movement`, function(_game){
-    // const [player1, player2] = _game.players
-    // const { name, currPos } = _game.players[0]
+
     p1 = new Player(_game.players[0].name, _game.players[0].currPos, _game.players[0].currentTurn, _game.players[0].score)
     p2 = new Player(_game.players[1].name, _game.players[1].currPos, _game.players[1].currentTurn, _game.players[1].score)
     game = new GoldRush(_game.row, _game.col, [p1, p2])

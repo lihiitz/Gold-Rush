@@ -28,6 +28,10 @@ io.on('connection', (socket) => {
     console.log(`in server`)    
     io.emit(`movement`, game)
   })
+
+  socket.on('createGame', (room) => {
+    socket.join(room)
+  })
 })
 
 const PORT = 3000

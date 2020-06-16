@@ -28,3 +28,15 @@
   display: grid;
   justify-items: end;
 }
+#startGame{
+  position: relative;
+  top: 20px;
+}
+
+#board{
+  position: relative;
+  top:20px
+}
+input{
+  text-align: center;
+}
